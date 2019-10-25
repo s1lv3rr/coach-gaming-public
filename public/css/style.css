@@ -1,0 +1,17 @@
+body {
+    margin: auto;
+    padding: 20px;
+    width: 400px;
+    background-color: rgb(83, 83, 88);
+}
+
+form > input{
+    margin-bottom: 5px;
+}
+
+.h3 {
+    color: white;
+}
+
+
+

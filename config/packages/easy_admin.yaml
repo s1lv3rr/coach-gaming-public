@@ -1,0 +1,51 @@
+easy_admin:
+    site_name: 'CoachGaming'
+    
+    design:
+        brand_color: 'darkcyan'        
+        form_theme:
+            - '@EasyAdmin/form/bootstrap_4.html.twig'
+       
+    entities:
+        User:
+            class: App\Entity\User
+            list:
+                fields: ['id', 'username', 'role', 'name', 'lastname', 'age', 'isActive', 'createdAt', 'updatedAt']
+        Unavailability:
+            class: App\Entity\Unavailability
+        InfoCoach:
+            class: App\Entity\InfoCoach
+            list:
+                fields: ['id', { property: 'user.username', label: 'User' }, 'user.id', { property: 'game.name', label: 'Game' }, { property: 'team.name', label: 'Team' }, 'price', 'rating', 'createdAt', 'updatedAt']
+        Review:
+            class: App\Entity\Review
+            list:
+                fields: ['id', { property: 'user.username', label: 'User' }, 'comment', { property: 'infocoach.user.username', label: 'Coach' }, 'rating', 'createdAt', 'updatedAt']
+        Platform:
+            class: App\Entity\Platform
+            list:
+                fields: ['id', 'name', 'games', 'createdAt', 'updatedAt']
+        Game:
+            class: App\Entity\Game
+            list:
+                fields: ['id', 'name', 'editor', 'description', 'headerBackground', 'createdAt', 'updatedAt']
+        Team:
+            class: App\Entity\Team
+            list:
+                fields: ['id', 'name', 'description', 'logo', 'infoCoaches', 'createdAt', 'updatedAt']
+        Logo:
+            class: App\Entity\Logo  
+        Record:
+            class: App\Entity\Record
+            list:
+                fields: ['id', 'user', 'logo', 'description', 'createdAt', 'updatedAt']
+        Message:
+            class: App\Entity\Message
+            list:
+                fields: ['id', 'sender', 'receiver', 'content', 'createdAt', 'updatedAt']
+        Role:
+            class: App\Entity\Role 
+
+  
+   
+    

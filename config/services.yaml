@@ -1,0 +1,74 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    # Current server URL
+    serverUrl: 'http://93.243.9.86'
+    # ex server URL before migration that you need to configure before using command bin/console app:server-migration
+    # This command will change all the avatar image url from old to new server, only useful in case of migration
+    formerServerUrl: 'http://92.243.9.86'
+    defaultAvatarPath: '/projet-CoachsGaming-back/coach-gaming/public/upload/avatar/bird.jpeg'
+    avatarDirectoryPath: '/projet-CoachsGaming-back/coach-gaming/public/upload/avatar/'    
+    avatar_directory: '%kernel.project_dir%/public/upload/avatar'
+    slugger_to_lower: true    
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        
+    sensio_framework_extra.view.listener:
+        alias: Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    App\Controller\UserController:
+        arguments: 
+            $serverUrl:  '%serverUrl%' 
+            $defaultAvatarPath:  '%defaultAvatarPath%'
+            $avatarDirectoryPath: '%avatarDirectoryPath%'
+
+    App\DataFixtures\AppFixtures:
+        arguments: 
+            $serverUrl:  '%serverUrl%' 
+            $defaultAvatarPath:  '%defaultAvatarPath%'
+            $avatarDirectoryPath: '%avatarDirectoryPath%'
+
+    App\Command\ServerMigration:
+        arguments: 
+            $serverUrl:  '%serverUrl%'             
+            $avatarDirectoryPath: '%avatarDirectoryPath%'
+            $formerServerUrl: '%formerServerUrl%'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    App\EventListener\EntitiesListener: 
+        arguments: 
+            $serverUrl:  '%serverUrl%' 
+            $defaultAvatarPath:  '%defaultAvatarPath%'   
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+
+    App\Utils\Slugger:
+        arguments:
+            $toLower: '%slugger_to_lower%'
+                
+    acme_api.event.authentication_success_listener:
+        class: App\EventListener\AuthenticationSuccessListener
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
+
+    

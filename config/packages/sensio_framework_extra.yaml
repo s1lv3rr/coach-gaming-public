@@ -1,0 +1,11 @@
+sensio_framework_extra:
+    router:
+        annotations: false
+        # app/config/config.yml
+         # app/config/config.yml
+
+    view: { annotations: false }
+        
+
+        # app/config/config.yml
+    request: { converters: true } 
